@@ -1,0 +1,6 @@
+teacher_id,name,email,phone,subject,qualification,address,hire_date
+TCH0001,Dr. Alice Johnson,alice@example.com,1234567890,Mathematics,Ph.D.,123 Teacher Lane,2015-01-10
+TCH0002,Mr. Bob Smith,bob@example.com,0987654321,Physics,M.Sc.,456 Education Way,2018-06-15
+TCH0003,Ms. Carol Davis,carol@example.com,5551234567,Chemistry,M.Sc.,789 Academic Rd,2017-09-01
+TCH0004,Prof. David Wilson,david@example.com,5559876543,Computer Science,Ph.D.,321 Tech Avenue,2012-02-20
+TCH0005,Mrs. Emma Martinez,emma@example.com,5554567890,English Literature,M.A.,654 Literary Dr,2019-08-01
