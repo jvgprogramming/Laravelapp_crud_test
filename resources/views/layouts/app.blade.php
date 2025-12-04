@@ -120,6 +120,42 @@
         .btn-warning:hover {
             background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
         }
+        /* Pagination styles to match app buttons */
+        .pagination {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+            padding: 0;
+            margin: 1rem 0;
+            justify-content: flex-end;
+        }
+        .pagination li {
+            display: inline-block;
+        }
+        .pagination li a,
+        .pagination li span {
+            display: inline-block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #667eea;
+            background: #fff;
+            border: 1px solid rgba(102,126,234,0.15);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .pagination li a:hover {
+            background: linear-gradient(135deg, #eef2ff 0%, #f5f7ff 100%);
+            transform: translateY(-2px);
+        }
+        .pagination li.active span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+        }
+        .pagination li.disabled span {
+            opacity: 0.5;
+            cursor: default;
+        }
         .btn-info {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -561,10 +597,22 @@
                     const title = studentType === 'student' ? `Edit Student - ${data.name}` : `Edit Teacher - ${data.name}`;
                     document.getElementById('editModalTitle').textContent = title;
 
+                    // Helper to format dates to YYYY-MM-DD for <input type="date">
+                    const formatDateForInput = (d) => {
+                        if (!d) return '';
+                        // handle ISO (2025-12-01T00:00:00) or space-separated (2025-12-01 00:00:00)
+                        try {
+                            return d.split('T')[0].split(' ')[0];
+                        } catch (e) {
+                            return '';
+                        }
+                    };
+
                     // Build form based on type
                     let formContent = '';
                     
                     if (studentType === 'student') {
+                        const dobVal = formatDateForInput(data.date_of_birth);
                         // Build course options dropdown
                         let courseOptions = '<option value="">-- Select Course --</option>';
                         if (data.courses) {
@@ -605,7 +653,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="editDOB">Date of Birth</label>
-                                <input type="date" class="form-control" id="editDOB" name="date_of_birth" value="${data.date_of_birth || ''}">
+                                <input type="date" class="form-control" id="editDOB" name="date_of_birth" value="${dobVal}">
                             </div>
                         `;
                     } else {
