@@ -65,8 +65,8 @@
             </tbody>
         </table>
 
-        <div class="mt-3">
-            {{ $teachers->links() }}
+        <div class="mt-4">
+            {{ $teachers->render('pagination.custom') }}
         </div>
     @else
         <div style="text-align: center; padding: 3rem; color: #999;">

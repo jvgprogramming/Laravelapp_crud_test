@@ -474,7 +474,7 @@
                 @csrf
                 <div class="modal-body">
                     <div style="background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border-left: 4px solid #667eea;">
-                        <h4 style="color: #667eea; margin-bottom: 0.5rem; font-size: 0.95rem;">📋 CSV Format Required</h4>
+                        <h4 style="color: #667eea; margin-bottom: 0.5rem; font-size: 0.95rem;">CSV Format Required</h4>
                         <p style="font-size: 0.9rem; color: #555; margin: 0;">
                             <strong>Students:</strong> student_id, name, email, phone, course, address, date_of_birth<br>
                             <strong>Teachers:</strong> teacher_id, name, email, phone, subject, qualification, address, hire_date
@@ -483,7 +483,7 @@
 
                     <div class="form-group">
                         <label for="importFile" style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span>📁 Select CSV File</span>
+                            <span>Select CSV File</span>
                         </label>
                         <input type="file" class="form-control" id="importFile" name="file" accept=".csv" required>
                         <small style="color: #999; display: block; margin-top: 0.5rem;">Maximum file size: 5MB</small>
@@ -500,7 +500,7 @@
 
                     <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; border-left: 4px solid #ffc107;">
                         <p style="margin: 0; font-size: 0.9rem; color: #856404;">
-                            <strong>⚠️ Note:</strong> Duplicate emails will be skipped. Make sure your CSV file contains the correct columns.
+                            <strong>Note:</strong> Duplicate emails will be skipped. Make sure your CSV file contains the correct columns.
                         </p>
                     </div>
                 </div>
@@ -656,6 +656,14 @@
                                 <select class="form-control" id="editQualification" name="qualification">
                                     ${qualOptions}
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editHireDate">Hire Date</label>
+                                <input type="date" class="form-control" id="editHireDate" name="hire_date" value="${data.hire_date || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label for="editAddress">Address</label>
+                                <textarea class="form-control" id="editAddress" name="address" rows="2">${data.address || ''}</textarea>
                             </div>
                         `;
                     }
