@@ -42,8 +42,9 @@
         nav {
             display: flex;
             gap: 0.5rem;
+            align-items: center;
         }
-        nav a {
+        nav a, .user-info {
             color: white;
             text-decoration: none;
             padding: 0.6rem 1.2rem;
@@ -52,8 +53,35 @@
             font-weight: 500;
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         nav a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .user-info {
+            background: rgba(255,255,255,0.15);
+        }
+        .logout-form {
+            display: inline;
+        }
+        .logout-btn {
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .logout-btn:hover {
             background: rgba(255,255,255,0.2);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -412,10 +440,19 @@
         <div class="container">
             <h1>School Management System</h1>
             <nav>
-                <a href="{{ route('students.index') }}">Students</a>
-                <a href="{{ route('teachers.index') }}">Teachers</a>
-                <a href="{{ route('students.create') }}">Add Student</a>
-                <a href="{{ route('teachers.create') }}">Add Teacher</a>
+                @auth
+                    <a href="{{ route('students.index') }}">Students</a>
+                    <a href="{{ route('teachers.index') }}">Teachers</a>
+                    <a href="{{ route('students.create') }}">Add Student</a>
+                    <a href="{{ route('teachers.create') }}">Add Teacher</a>
+                    <div class="user-info">
+                        <span>👤 {{ auth()->user()->name }}</span>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}" class="logout-form">
+                        @csrf
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                @endauth
             </nav>
         </div>
     </header>

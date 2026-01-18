@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -58,11 +59,24 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $students = Student::latest()->paginate(10);
-            return view('students.index', compact('students'));
+            $search = $request->get('search', '');
+            
+            $query = Student::query();
+            
+            // Apply search filter if search term is provided
+            if ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('student_id', 'like', "%{$search}%")
+                      ->orWhere('course', 'like', "%{$search}%")
+                      ->orWhere('phone', 'like', "%{$search}%");
+            }
+            
+            $students = $query->latest()->paginate(10)->appends($request->query());
+            return view('students.index', compact('students', 'search'));
         } catch (\Exception $e) {
             return view('students.index', ['students' => collect([]), 'error' => 'Database connection error. Please check your .env file and ensure MySQL is running.']);
         }
@@ -89,6 +103,7 @@ class StudentController extends Controller
             'course' => 'required|string|max:255',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Auto-generate student_id (format: STU0001, STU0002, etc.)
@@ -102,6 +117,14 @@ class StudentController extends Controller
 
         $data = $request->all();
         $data['student_id'] = $studentId;
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('students', $imageName, 'public');
+            $data['image'] = 'students/' . $imageName;
+        }
 
         Student::create($data);
 
@@ -138,11 +161,25 @@ class StudentController extends Controller
             'course' => 'required|string|max:255',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Don't allow student_id to be changed
         $data = $request->all();
         unset($data['student_id']); // Remove student_id from update data
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($student->image && Storage::disk('public')->exists($student->image)) {
+                Storage::disk('public')->delete($student->image);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('students', $imageName, 'public');
+            $data['image'] = 'students/' . $imageName;
+        }
 
         $student->update($data);
 
@@ -155,6 +192,11 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
+        // Delete image if exists
+        if ($student->image && Storage::disk('public')->exists($student->image)) {
+            Storage::disk('public')->delete($student->image);
+        }
+
         $student->delete();
 
         return redirect()->route('students.index')

@@ -83,11 +83,24 @@ class TeacherController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $teachers = Teacher::latest()->paginate(10);
-            return view('teachers.index', compact('teachers'));
+            $search = $request->get('search', '');
+            
+            $query = Teacher::query();
+            
+            // Apply search filter if search term is provided
+            if ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('teacher_id', 'like', "%{$search}%")
+                      ->orWhere('subject', 'like', "%{$search}%")
+                      ->orWhere('phone', 'like', "%{$search}%");
+            }
+            
+            $teachers = $query->latest()->paginate(10)->appends($request->query());
+            return view('teachers.index', compact('teachers', 'search'));
         } catch (\Exception $e) {
             return view('teachers.index', ['teachers' => collect([]), 'error' => 'Database connection error. Please check your .env file and ensure MySQL is running.']);
         }
@@ -117,6 +130,7 @@ class TeacherController extends Controller
             'qualification_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'address' => 'nullable|string',
             'hire_date' => 'nullable|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Auto-generate teacher_id (format: TCH0001, TCH0002, etc.)
@@ -137,6 +151,14 @@ class TeacherController extends Controller
             $imageName = time() . '_' . $teacherId . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('qualifications', $imageName, 'public');
             $data['qualification_image'] = $imagePath;
+        }
+
+        // Handle profile image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('teachers', $imageName, 'public');
+            $data['image'] = 'teachers/' . $imageName;
         }
 
         Teacher::create($data);
@@ -177,6 +199,7 @@ class TeacherController extends Controller
             'qualification_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'address' => 'nullable|string',
             'hire_date' => 'nullable|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Don't allow teacher_id to be changed
@@ -196,6 +219,19 @@ class TeacherController extends Controller
             $data['qualification_image'] = $imagePath;
         }
 
+        // Handle profile image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($teacher->image && Storage::disk('public')->exists($teacher->image)) {
+                Storage::disk('public')->delete($teacher->image);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('teachers', $imageName, 'public');
+            $data['image'] = 'teachers/' . $imageName;
+        }
+
         $teacher->update($data);
 
         return redirect()->route('teachers.index')
@@ -210,6 +246,11 @@ class TeacherController extends Controller
         // Delete qualification image if exists
         if ($teacher->qualification_image && Storage::disk('public')->exists($teacher->qualification_image)) {
             Storage::disk('public')->delete($teacher->qualification_image);
+        }
+
+        // Delete profile image if exists
+        if ($teacher->image && Storage::disk('public')->exists($teacher->image)) {
+            Storage::disk('public')->delete($teacher->image);
         }
 
         $teacher->delete();

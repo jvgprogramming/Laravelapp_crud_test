@@ -6,6 +6,17 @@
 <div class="card">
     <h2>Student Details</h2>
     
+    @if($student->image)
+        <div class="form-group">
+            <label>Profile Photo</label>
+            <div style="margin: 0.5rem 0;">
+                <img src="{{ Storage::url($student->image) }}" alt="{{ $student->name }}" 
+                     style="max-width: 300px; max-height: 300px; border: 2px solid #ddd; border-radius: 12px; object-fit: cover; cursor: pointer;"
+                     onclick="openImageModal('{{ Storage::url($student->image) }}')" title="Click to view full size">
+            </div>
+        </div>
+    @endif
+
     <div class="form-group">
         <label>ID</label>
         <div style="padding: 0.875rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; border: 2px solid #e0e0e0;">{{ $student->id }}</div>

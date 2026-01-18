@@ -18,6 +18,26 @@
             </div>
         </div>
 
+        @if($teacher->image)
+            <div class="form-group">
+                <label>Current Photo</label>
+                <div style="margin: 0.5rem 0;">
+                    <img src="{{ Storage::url($teacher->image) }}" alt="{{ $teacher->name }}" 
+                         style="max-width: 200px; max-height: 200px; border: 2px solid #ddd; border-radius: 12px; object-fit: cover; cursor: pointer;"
+                         onclick="openImageModal('{{ Storage::url($teacher->image) }}')" title="Click to view full size">
+                </div>
+            </div>
+        @endif
+
+        <div class="form-group">
+            <label for="image">Change Profile Photo</label>
+            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+            <small style="display: block; margin-top: 0.25rem; color: #6c757d;">Accepted formats: JPEG, PNG, JPG, GIF (Max: 2MB) - Leave empty to keep current photo</small>
+            @error('image')
+                <div style="color: #e74c3c; margin-top: 0.25rem; font-size: 0.875rem;">{{ $message }}</div>
+            @enderror
+        </div>
+
         <div class="form-group">
             <label for="name">Full Name *</label>
             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $teacher->name) }}" required>

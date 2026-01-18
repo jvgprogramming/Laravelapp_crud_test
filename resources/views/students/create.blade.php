@@ -6,11 +6,20 @@
 <div class="card">
     <h2>Add New Student</h2>
     
-    <form action="{{ route('students.store') }}" method="POST">
+    <form action="{{ route('students.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         
         <div class="alert alert-success" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
             <strong>Note:</strong> Student ID will be automatically generated (e.g., STU0001, STU0002, etc.)
+        </div>
+
+        <div class="form-group">
+            <label for="image">Profile Photo</label>
+            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+            <small style="display: block; margin-top: 0.25rem; color: #6c757d;">Accepted formats: JPEG, PNG, JPG, GIF (Max: 2MB)</small>
+            @error('image')
+                <div style="color: #e74c3c; margin-top: 0.25rem; font-size: 0.875rem;">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="form-group">

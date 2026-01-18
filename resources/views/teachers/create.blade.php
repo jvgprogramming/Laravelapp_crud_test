@@ -14,6 +14,15 @@
         </div>
 
         <div class="form-group">
+            <label for="image">Profile Photo</label>
+            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+            <small style="display: block; margin-top: 0.25rem; color: #6c757d;">Accepted formats: JPEG, PNG, JPG, GIF (Max: 2MB)</small>
+            @error('image')
+                <div style="color: #e74c3c; margin-top: 0.25rem; font-size: 0.875rem;">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
             <label for="name">Full Name *</label>
             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
             @error('name')

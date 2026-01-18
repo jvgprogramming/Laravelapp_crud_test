@@ -16,6 +16,7 @@ class Teacher extends Model
         'qualification_image',
         'address',
         'hire_date',
+        'image',
     ];
 
     protected $casts = [
